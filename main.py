@@ -23,7 +23,7 @@ def load_transactions(file):
         df["Amount"] = df["Amount"].astype(float)  #Ensure Amount is float
         df["Balance"] = df["Balance"].astype(float) #Ensure Balance is float
 
-        st.write(df)
+        # st.write(df)
         return df
     
     except Exception as e:
@@ -48,6 +48,12 @@ def main():
             #Creatinf a new column for in/out transactions
             in_df = df[df["Amount"] > 0].copy()
             out_df = df[df["Amount"] < 0].copy()
+
+            tab1, tab2 = st.tabs(["Expenses (In/Debit)", "Payments (Out/Credit)"])
+            with tab1:
+                st.write(in_df)
+            with tab2:
+                st.write(out_df)
             
 
 
