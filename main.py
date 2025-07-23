@@ -9,20 +9,37 @@ st.set_page_config(page_title="Mah Finances", layout="wide")
 custom_catagory_file = "custom_categories.json"
 
 #Store categories in session state
-if "custom_catagory" not in st.session_state:
-    st.session_state.categories = {
+if "custom_categories" not in st.session_state:
+    st.session_state.custom_categories = {
         "Uncategorized": []
     }
 
 #Load categories from JSON file if it exists
 if os.path.exists(custom_catagory_file):
     with open(custom_catagory_file, "r") as f:
-        st.session_state.categories = json.load(f)
+        st.session_state.custom_categories = json.load(f)
 
 def save_categories():
     """Save categories to JSON file"""
     with open(custom_catagory_file, "w") as f:
-        json.dump(st.session_state.categories, f, indent=4)
+        json.dump(st.session_state.custom_categories, f, indent=4)
+
+def custom_catagorise_transaction(df):
+    df["Custom Category"] = "Uncategorized"  # Default category
+
+    for cust_cat, keywords in st.session_state.custom_categories.items():
+        if cust_cat == "Uncategorized" or not keywords:
+            continue
+
+        lower_keywords = [keyword.lower().strip() for keyword in keywords]
+
+
+        for idx, row in df.iterrows():
+            details = row["Transaction Details"].lower()
+            if details in lower_keywords:
+                df.at[idx, "Custom Category"] = cust_cat
+
+    return df
 
 def load_transactions(file):
     """Use pandas to process the csv data from uploaded file
@@ -42,7 +59,7 @@ def load_transactions(file):
         df["Balance"] = df["Balance"].astype(float) #Ensure Balance is float
 
         # st.write(df)
-        return df
+        return custom_catagorise_transaction(df)
     
     except Exception as e:
         #if cant read the csv, display an error message
@@ -73,8 +90,8 @@ def main():
                 add_button = st.button("Add Custom Category")
 
                 if add_button and new_catagory:
-                    if new_catagory not in st.session_state.categories:
-                        st.session_state.categories[new_catagory] = []
+                    if new_catagory not in st.session_state.custom_categories:
+                        st.session_state.custom_categories[new_catagory] = []
                         save_categories()
                         st.rerun()
 
