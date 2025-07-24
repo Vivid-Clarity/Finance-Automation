@@ -27,6 +27,19 @@
         "Public Transport Victoria"
     ],
     "Medical": [
-        "Chemist Warehouse (The Glen Shopping Centre)"
+        "Chemist Warehouse (The Glen Shopping Centre)",
+        "Medical"
+    ],
+    "Internal transfers": [
+        "Internal transfers"
+    ],
+    "Fees": [
+        "Fees"
+    ],
+    "Beauty and Health": [
+        "Just Cuts (The Glen Shopping Centre)"
+    ],
+    "Attractions and Events": [
+        "Boulder Lab (Clayton)"
     ]
 }

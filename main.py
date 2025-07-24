@@ -68,6 +68,12 @@ def load_transactions(file):
         df["Amount"] = df["Amount"].astype(float)  #Ensure Amount is float
         df["Balance"] = df["Balance"].astype(float) #Ensure Balance is float
 
+        # Replace missing Merchant Names with Category values
+        df["Merchant Name"] = df.apply(
+            lambda row: row["Category"] if pd.isna(row["Merchant Name"]) or str(row["Merchant Name"]).strip() == "" else row["Merchant Name"],
+            axis=1
+        )
+
         return custom_catagorise_transaction(df)
     
     except Exception as e:
@@ -155,7 +161,7 @@ def main():
                     column_config={
                      "Amount": st.column_config.NumberColumn("Amount", format="%.2f AUD")   
                     },
-                    use_container_width=True,
+                    use_container_width=False,
                     hide_index=True
                 )
                 
