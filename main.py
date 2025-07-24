@@ -41,11 +41,6 @@ def custom_catagorise_transaction(df):
             if details in lower_keywords:
                 df.at[idx, "Custom Category"] = cust_cat
 
-            #If it has no merchant name, take make Custom Category the default, existing category
-            elif details == "":
-                print(df.at[idx,"Transaction Details"]," No Merchant Name -->    ", df.at[idx, "Category"])
-                df.at[idx, "Custom Category"] = df.at[idx, "Category"]
-
     return df
 
 def add_keyword_to_category(category, keyword):
@@ -92,10 +87,6 @@ def main():
         #if file is uploaded, process the data
         df = load_transactions(upload_file)
 
-        # st.write("Preview of categorized data:")
-        # st.dataframe(df[["Merchant Name", "Category", "Custom Category"]])
-
-
         #Catagorising data
         if df is not None:
             #Creatinf a new column for in/out transactions
@@ -106,6 +97,10 @@ def main():
 
             tab1, tab2 = st.tabs(["Out/Credit", "In/Debit"])
             with tab1:
+                st.subheader("Expenses Summary")
+                total_payments = out_df["Amount"].sum()
+                st.metric("Total Expenses", f"{total_payments:,.2f} AUD")
+
                 new_catagory = st.text_input("New Custom Category name")
                 add_button = st.button("Add Custom Category")
 
@@ -116,12 +111,6 @@ def main():
                         st.rerun()
 
                 st.subheader("Your Expenses")
-                # Combine manually defined + fallback categories for selectbox options
-                all_category_options = list(set(
-                    list(st.session_state.custom_categories.keys()) +
-                    df["Category"].dropna().unique().tolist()
-                ))
-
                 edited_df = st.data_editor(
                     st.session_state.out_df[["Date","Merchant Name", "Transaction Details","Category", "Amount", "Balance", "Custom Category"]],
                     column_config={
@@ -130,7 +119,7 @@ def main():
                         "Balance": st.column_config.NumberColumn("Balance", format="%.2f"),
                         "Custom Category": st.column_config.SelectboxColumn(
                             "Custom Category",
-                            options=all_category_options,
+                            options=list(st.session_state.custom_categories.keys()),
                         )},
                         hide_index=True,
                         use_container_width=True,
@@ -156,13 +145,35 @@ def main():
                         # add_keyword_to_category(new_cust_cat, details)
                         if pd.notna(details) and details.strip():
                             add_keyword_to_category(new_cust_cat, details.strip())
-                        # print("added")
-                       
+                        
+                st.subheader('Expense Summary')
+                category_totals = st.session_state.out_df.groupby("Custom Category")["Amount"].sum().reset_index()
+                category_totals = category_totals.sort_values("Amount", ascending=False)
+                
+                st.dataframe(
+                    category_totals, 
+                    column_config={
+                     "Amount": st.column_config.NumberColumn("Amount", format="%.2f AUD")   
+                    },
+                    use_container_width=True,
+                    hide_index=True
+                )
+                
+                fig = px.pie(
+                    category_totals,
+                    values=category_totals["Amount"].abs(),
+                    names="Custom Category",
+                    title="Expenses by Category"
+                )
+                st.plotly_chart(fig, use_container_width=True)
+
 
             with tab2:
+                st.subheader("Income Summary")
+                total_payments = in_df["Amount"].sum()
+                st.metric("Total Earnings", f"{total_payments:,.2f} AUD")
                 st.write(in_df)
             
 
 
 main()
-    

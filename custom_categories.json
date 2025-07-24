@@ -2,5 +2,31 @@
     "Uncategorized": [],
     "Shopping": [
         "Coles (Pinewood Shopping Centre)"
+    ],
+    "Coffee and Snacks": [
+        "Southern Society Cafe & Restaurant",
+        "Bonbons Bakery (Burwood One)",
+        "Hokkaido Baked Cheese Tart (The Glen)",
+        "Square"
+    ],
+    "Clothing and Accessories": [
+        "Salvos Stores (Mulgrave)",
+        "UNIQLO"
+    ],
+    "Video Games": [
+        "Steam"
+    ],
+    "Groceries": [
+        "Coles (Pinewood Shopping Centre)",
+        "Coles (The Glen)"
+    ],
+    "Food": [
+        "Taste Of Taj Sweets & Indian Cuisine"
+    ],
+    "Transport": [
+        "Public Transport Victoria"
+    ],
+    "Medical": [
+        "Chemist Warehouse (The Glen Shopping Centre)"
     ]
 }
