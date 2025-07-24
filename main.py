@@ -41,6 +41,14 @@ def custom_catagorise_transaction(df):
 
     return df
 
+def add_keyword_to_category(category, keyword):
+    keyword = keyword.lower().strip()
+    if keyword and category in st.session_state.custom_categories[category]:
+        st.session_state.custom_categories[category].append(keyword)
+        save_categories()
+        return True
+    return False
+
 def load_transactions(file):
     """Use pandas to process the csv data from uploaded file
 
@@ -84,7 +92,9 @@ def main():
             in_df = df[df["Amount"] > 0].copy()
             out_df = df[df["Amount"] < 0].copy()
 
-            tab1, tab2 = st.tabs(["Expenses (In/Debit)", "Payments (Out/Credit)"])
+            st.session_state.out_df = out_df.copy()
+
+            tab1, tab2 = st.tabs(["Out/Credit", "In/Debit"])
             with tab1:
                 new_catagory = st.text_input("New Custom Category name")
                 add_button = st.button("Add Custom Category")
@@ -95,10 +105,29 @@ def main():
                         save_categories()
                         st.rerun()
 
-                st.write(in_df)
+                st.subheader("Your Expenses")
+                edited_df = st.data_editor(
+                    st.session_state.out_df[["Date", "Transaction Details", "Amount", "Balance", "Custom Category"]],
+                    column_config={
+                        "Date": st.column_config.DateColumn("Date", format="DD/MMM/YYYY"),
+                        "Amount": st.column_config.NumberColumn("Amount", format="%.2f"),
+                        "Balance": st.column_config.NumberColumn("Balance", format="%.2f"),
+                        "Custom Category": st.column_config.SelectboxColumn(
+                            "Custom Category",
+                            options=list(st.session_state.custom_categories.keys()),
+                        )},
+                        hide_index=True,
+                        use_container_width=True,
+                        key="cust_catagory_editor"
+                
+                )
+
+                save_button = st.button("Save Changes")
+                if save_button:
+                    pass
 
             with tab2:
-                st.write(out_df)
+                st.write(in_df)
             
 
 
