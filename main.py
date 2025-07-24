@@ -33,17 +33,24 @@ def custom_catagorise_transaction(df):
 
         lower_keywords = [keyword.lower().strip() for keyword in keywords]
 
-
+        
         for idx, row in df.iterrows():
-            details = row["Transaction Details"].lower()
+            details = row["Merchant Name"].lower().strip() if pd.notna(row["Merchant Name"]) else ""
+            # print(details)
+            # Check if any rows Mearchant Name already has a category assigned
             if details in lower_keywords:
                 df.at[idx, "Custom Category"] = cust_cat
+
+            #If it has no merchant name, take make Custom Category the default, existing category
+            elif details == "":
+                print(df.at[idx,"Transaction Details"]," No Merchant Name -->    ", df.at[idx, "Category"])
+                df.at[idx, "Custom Category"] = df.at[idx, "Category"]
 
     return df
 
 def add_keyword_to_category(category, keyword):
-    keyword = keyword.lower().strip()
-    if keyword and category in st.session_state.custom_categories[category]:
+    keyword = keyword.strip()
+    if keyword and keyword not in st.session_state.custom_categories[category]:
         st.session_state.custom_categories[category].append(keyword)
         save_categories()
         return True
@@ -66,7 +73,6 @@ def load_transactions(file):
         df["Amount"] = df["Amount"].astype(float)  #Ensure Amount is float
         df["Balance"] = df["Balance"].astype(float) #Ensure Balance is float
 
-        # st.write(df)
         return custom_catagorise_transaction(df)
     
     except Exception as e:
@@ -85,6 +91,10 @@ def main():
     if upload_file is not None:
         #if file is uploaded, process the data
         df = load_transactions(upload_file)
+
+        # st.write("Preview of categorized data:")
+        # st.dataframe(df[["Merchant Name", "Category", "Custom Category"]])
+
 
         #Catagorising data
         if df is not None:
@@ -106,15 +116,21 @@ def main():
                         st.rerun()
 
                 st.subheader("Your Expenses")
+                # Combine manually defined + fallback categories for selectbox options
+                all_category_options = list(set(
+                    list(st.session_state.custom_categories.keys()) +
+                    df["Category"].dropna().unique().tolist()
+                ))
+
                 edited_df = st.data_editor(
-                    st.session_state.out_df[["Date", "Transaction Details", "Amount", "Balance", "Custom Category"]],
+                    st.session_state.out_df[["Date","Merchant Name", "Transaction Details","Category", "Amount", "Balance", "Custom Category"]],
                     column_config={
                         "Date": st.column_config.DateColumn("Date", format="DD/MMM/YYYY"),
                         "Amount": st.column_config.NumberColumn("Amount", format="%.2f"),
                         "Balance": st.column_config.NumberColumn("Balance", format="%.2f"),
                         "Custom Category": st.column_config.SelectboxColumn(
                             "Custom Category",
-                            options=list(st.session_state.custom_categories.keys()),
+                            options=all_category_options,
                         )},
                         hide_index=True,
                         use_container_width=True,
@@ -122,9 +138,26 @@ def main():
                 
                 )
 
-                save_button = st.button("Save Changes")
+                save_button = st.button("Save Changes", type="primary")
                 if save_button:
-                    pass
+                    #check every row in edited_df for changes
+                    for idx, row in edited_df.iterrows():
+                        new_cust_cat = row["Custom Category"]
+
+                        #If no changes made, continue
+                        if new_cust_cat == st.session_state.out_df.at[idx, "Custom Category"]:
+                            continue
+                        
+                        #If a change was made we use the Transaction Details to an identifier
+                        #Change this to make use of Merchant Name, 
+                        # and in the case of no merchant name, make CUstCat the default catagory the bank assigned to the transaction
+                        details = row["Merchant Name"]
+                        st.session_state.out_df.at[idx, "Custom Category"] = new_cust_cat
+                        # add_keyword_to_category(new_cust_cat, details)
+                        if pd.notna(details) and details.strip():
+                            add_keyword_to_category(new_cust_cat, details.strip())
+                        # print("added")
+                       
 
             with tab2:
                 st.write(in_df)
