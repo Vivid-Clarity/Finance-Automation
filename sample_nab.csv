@@ -1,0 +1,6 @@
+Date,Merchant Name,Transaction Details,Category,Amount,Balance
+05 Jan 25,Coles,POS 1234 Coles,Groceries,-45.50,1032.75
+06 Jan 25,Woolworths,POS 5678 Woolworths,Groceries,-28.90,1003.85
+08 Jan 25,PTV,Myki Top Up,Transport,-20.00,983.85
+10 Jan 25,Acme Payroll,Salary,Income,2500.00,3483.85
+11 Jan 25,Netflix,Subscription,Entertainment,-16.99,3466.86
