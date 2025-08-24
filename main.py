@@ -4,7 +4,7 @@ import plotly.express as px
 import json
 import os
 
-st.set_page_config(page_title="Mah Finances", layout="wide")
+st.set_page_config(page_title="My Finances", layout="wide")
 
 custom_catagory_file = "custom_categories.json"
 
@@ -85,7 +85,7 @@ def main():
     """
     Main function to run the Streamlit app
     """
-    st.title("Mah Finances")
+    st.title("My Finances")
     #streamlit built in file uploader
     upload_file = st.file_uploader("Upload account statement(CSV file)", type=["csv"])
 

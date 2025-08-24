@@ -1,2 +1,36 @@
-/pdf_to_spreadsheet.py
-this year.csv
+# Python cache / build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Jupyter / Streamlit caches
+.ipynb_checkpoints/
+.streamlit/
+*.DS_Store
+
+# Sensitive data
+custom_categories.json
+*.csv
+*.xlsx
+*.xls
+*.tsv
+
+# IDE & editor configs
+.vscode/
+.idea/
+
+# OS-specific
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
