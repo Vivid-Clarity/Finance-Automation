@@ -19,7 +19,7 @@ If you're using another bank, you may need to adjust your CSV headers to match t
 
 ---
 
-## 📌 NAB Expected CSV Format
+## NAB Expected CSV Format
 
 The app was built around **NAB's CSV export format** from online banking.  
 Your CSV should look like this:
@@ -37,16 +37,8 @@ Your CSV should look like this:
 
 ---
 
-## 📸 Demo
 
-_(Optional: Add a short GIF or screenshot of uploading a NAB CSV → editing → viewing pie chart.)_
-
-```bash
-streamlit run main.py
-
----
-
-## 📦 Tech Stack
+## Tech Stack
 
 - **Frontend / UI** → [Streamlit](https://streamlit.io/)
 - **Data Processing** → [pandas](https://pandas.pydata.org/)
