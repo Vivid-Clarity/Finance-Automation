@@ -1,4 +1,4 @@
-# Mah Finances — Personal Finance Tracker  
+# Personal Finance Tracker  
 
 A lightweight **Streamlit** web app for tracking personal finances, built primarily for **NAB (National Australia Bank)** CSV exports.  
 Upload your NAB account statement, categorise transactions using **custom rules**, and get **interactive summaries** and **charts** of your spending.
